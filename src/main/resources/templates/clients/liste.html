@@ -1,0 +1,29 @@
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org"> 
+	<head>
+		<title>Clients</title>
+	</head> 
+	<body> 
+		<div th:replace="~{fragments/header :: header}"></div> 
+		<main> 
+			<h1>Liste des clients</h1> 
+			<a th:href="@{/clients/nouveau}">Ajouter un client</a> 
+			<table border="1"> 
+				<tr> 
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Email</th>
+					<th>Téléphone</th> 
+				</tr> 
+				<tr th:each="client : ${clients}"> 
+					<td th:text="${client.nom}"></td> 
+					<td th:text="${client.prenom}"></td> 
+					<td th:text="${client.email}"></td> 
+					<td th:text="${client.telephone}"></td> 
+				</tr> 
+			</table> 
+			<p th:if="${clients.isEmpty()}">Aucun client 
+			enregistré pour le moment.</p> 
+		</main> 
+	</body> 
+</html>
