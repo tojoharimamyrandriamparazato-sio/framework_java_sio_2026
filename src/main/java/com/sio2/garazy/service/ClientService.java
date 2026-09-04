@@ -1,9 +1,13 @@
 package com.sio2.garazy.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sio2.garazy.dto.ClientDTO;
@@ -25,6 +29,33 @@ public class ClientService {
 			dtos.add(new ClientDTO(c.getId(), c.getNom(), c.getPrenom(), c.getEmail(), c.getTelephone()));
 		}
 		return dtos;
+	}
+	public Page<ClientDTO> rechercher(
+			String nom,
+			String prenom,
+			String email,
+			String telephone,
+			Pageable pageable) {
+		return clientRepository
+				.filtrer(
+						"%"+nom+"%",
+						"%"+prenom+"%",
+						"%"+email+"%",
+						"%"+telephone+"%",
+						pageable)
+				.map(ClientMapper::toDto);
+	}
+	public Map<String, Object> requeteMixte() {
+		Map<String, Object> donnees = new HashMap<String, Object>();
+		Map<String, Integer> effectifs = new HashMap<String, Integer>();
+		List<Object[]> effectifsBruts = this.clientRepository.compterParNom();
+		for(Object[] obj : effectifsBruts) {
+			effectifs.put(obj[0].toString(), Integer.parseInt(obj[1].toString()));
+		}
+		donnees.put("minnom", this.clientRepository.nomMinAlphabetique());
+		donnees.put("maxnom", this.clientRepository.nomMaxAlphabetique());
+		donnees.put("effectifs", effectifs);
+		return donnees;
 	}
 	public ClientDTO ajouter(ClientDTO dto) {
 		return ClientMapper.toDto(clientRepository.save(ClientMapper.toEntity(dto)));

@@ -2,7 +2,13 @@ package com.sio2.garazy.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sio2.garazy.dto.ClientDTO;
@@ -32,6 +39,34 @@ public class ClientRestController {
 	public List<ClientDTO> lireTout() {
 		return this.clientService.trouverTous();
 	}
+	
+	@GetMapping("/recherche")
+	public Page<ClientDTO> rechercher(
+			@RequestParam(defaultValue="") String nom,
+			@RequestParam(defaultValue="") String prenom,
+			@RequestParam(defaultValue="") String email,
+			@RequestParam(defaultValue="") String telephone,
+			@RequestParam(defaultValue="0") int numpage,
+			@RequestParam(defaultValue="nom") String colonnetri,
+			@RequestParam(defaultValue="asc") String senstri) {
+		Direction direction = senstri.equals("asc") ? 
+				Direction.ASC : Direction.DESC;
+		Pageable pageable = PageRequest.of(
+				numpage,
+				10,
+				Sort.by(direction, colonnetri));
+		return this.clientService.rechercher(
+				nom,
+				prenom,
+				email,
+				telephone,
+				pageable);
+	}
+	@GetMapping("/requetemixte")
+	public Map<String, Object> compterParNom() {
+		return this.clientService.requeteMixte();
+	}
+	
 	@PostMapping
 	public ResponseEntity<?> creerClient(@Valid @RequestBody
 			ClientDTO dto) {

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sio2.garazy.entity.Client;
+import com.sio2.garazy.mapper.ClientMapper;
 import com.sio2.garazy.service.ClientService;
 
 @Controller
@@ -26,7 +27,7 @@ public class ClientController {
 	} 
 	@PostMapping("/clients") 
 	public String ajouter(Client client) { 
-		this.clientService.ajouter(client); 
+		this.clientService.ajouter(ClientMapper.toDto(client));
 		return "redirect:/clients";
 	} 
 } 
